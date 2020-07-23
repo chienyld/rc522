@@ -131,11 +131,12 @@ def job2(q1, q2, lock):
             print (checka)
             #print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
             checkb=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
-            print (b)
+            print (checkb)
             if checka != q1.get() or checkb != q2.get():
                 pygame.mixer.stop()
                 pygame.mixer.music.stop()
                 pygame.event.clear()
+    time.sleep(1) 
     lock.release()
 
 #定義主程式
