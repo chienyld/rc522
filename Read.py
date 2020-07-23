@@ -24,6 +24,7 @@ print ("Press Ctrl-C to stop.")
 
 q1 = Queue.Queue(maxsize=10)
 q2 = Queue.Queue(maxsize=10)
+q1.put(1)
 
 pygame.init()
 pygame.mixer.init()
@@ -31,15 +32,12 @@ screen=pygame.display.set_mode([640,480])
 pygame.time.delay(1000)
 
 while continue_reading:
-    MIFAREReader = MFRC522.MFRC522()
-    # Scan for cards    
+    MIFAREReader = MFRC522.MFRC522()  
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)    
-    # Get the UID of the card
     (status,uid) = MIFAREReader.MFRC522_Anticoll()
-    # If we have the UID, continue
+
     MIFAREReader2 = MFRC52202.MFRC52202()
     (status2,TagType2) = MIFAREReader2.MFRC522_Request(MIFAREReader2.PICC_REQIDL)    
-        # Get the UID of the card
     (status2,uid2) = MIFAREReader2.MFRC522_Anticoll()
         
     if status == MIFAREReader.MI_OK:
@@ -48,23 +46,25 @@ while continue_reading:
         a=str(uid[0])+str(uid[1])+str(uid[2])+str(uid[3])
         print (a)
         q1.put(a)
-        time.sleep(1)
+        time.sleep(0.1)
         
         #pygame.init()
         #pygame.mixer.init()
         #screen=pygame.display.set_mode([640,480])
         #pygame.time.delay(1000)
         file1 = a+".mp3"
-        pygame.mixer.music.load(file1)
-        pygame.mixer.music.play(loops=2)
+        
+        
         #MIFAREReader2 = MFRC52202.MFRC52202()
         #(status2,TagType2) = MIFAREReader2.MFRC522_Request(MIFAREReader2.PICC_REQIDL)    
         #(status2,uid2) = MIFAREReader2.MFRC522_Anticoll()
-        if a == q1.get() or q1.empty():
-            while pygame.mixer.music.get_busy():      
-                pygame.time.delay(100)
+        if a != q1.get():
+            #while pygame.mixer.music.get_busy():      
+                #pygame.time.delay(100)
             pygame.mixer.music.stop()
             pygame.mixer.music.unload()
+            pygame.mixer.music.load(file1)
+            pygame.mixer.music.play(2)
         if status2 == MIFAREReader2.MI_OK:
             print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
             b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
@@ -72,17 +72,18 @@ while continue_reading:
             q2.put(b)
             file2 = b+".mp3"
             #time.sleep(1)
-            if b == q2.get() or q2.empty():
+            if b == q2.get():
                 try:            
-                    while pygame.mixer.music.get_busy():
-                        pygame.time.delay(100) 
+                    #while pygame.mixer.music.get_busy():
+                        #pygame.time.delay(100) 
                     pygame.mixer.music.load(file2)
-                    pygame.mixer.music.play(loops=2)
+                    pygame.mixer.music.queue(file2)
+                    #pygame.mixer.music.play(2)
                 except pygame.error as message:   
                     print("Cannot load file")
                     pygame.mixer.music.stop()
     if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
-        #time.sleep(1)
+        #time.sleep(0.5)
         print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
         b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
         print (b)
@@ -94,11 +95,10 @@ while continue_reading:
         #pygame.time.delay(1000)
         if b == q2.get() or q2.empty():
             try:            
-                while pygame.mixer.music.get_busy():
-                    pygame.time.delay(100)  
-                o2=open(file2)  
-                pygame.mixer.music.load(file2)
-                pygame.mixer.music.play(loops=2)
+                #while pygame.mixer.music.get_busy():
+                    #pygame.time.delay(100)  
+                pygame.mixer.music.load(file2)              
+                pygame.mixer.music.play(2)
             except pygame.error as message:   
                 print("Cannot load file")
                 pygame.mixer.music.stop()
