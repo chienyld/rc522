@@ -25,6 +25,7 @@ print ("Press Ctrl-C to stop.")
 q1 = Queue.Queue(maxsize=10)
 q2 = Queue.Queue(maxsize=10)
 q1.put(1)
+q2.put(1)
 
 pygame.init()
 pygame.mixer.init()
@@ -53,18 +54,6 @@ while continue_reading:
         #screen=pygame.display.set_mode([640,480])
         #pygame.time.delay(1000)
         file1 = a+".mp3"
-        
-        
-        #MIFAREReader2 = MFRC52202.MFRC52202()
-        #(status2,TagType2) = MIFAREReader2.MFRC522_Request(MIFAREReader2.PICC_REQIDL)    
-        #(status2,uid2) = MIFAREReader2.MFRC522_Anticoll()
-        if a != q1.get():
-            #while pygame.mixer.music.get_busy():      
-                #pygame.time.delay(100)
-            pygame.mixer.music.stop()
-            pygame.mixer.music.unload()
-            pygame.mixer.music.load(file1)
-            pygame.mixer.music.play(2)
         if status2 == MIFAREReader2.MI_OK:
             print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
             b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
@@ -72,36 +61,46 @@ while continue_reading:
             q2.put(b)
             file2 = b+".mp3"
             #time.sleep(1)
-            if b == q2.get():
-                try:            
-                    #while pygame.mixer.music.get_busy():
-                        #pygame.time.delay(100) 
+            if b != q2.get():
+                try:
+                    pygame.mixer.music.load(file1)
+                    pygame.mixer.music.play()
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.delay(100)
                     pygame.mixer.music.load(file2)
-                    pygame.mixer.music.queue(file2)
-                    #pygame.mixer.music.play(2)
+                    pygame.mixer.music.play()
                 except pygame.error as message:   
                     print("Cannot load file")
                     pygame.mixer.music.stop()
-    if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
-        #time.sleep(0.5)
-        print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
-        b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
-        print (b)
-        q2.put(b)
-        file2 = b+".mp3"
-        #pygame.init()
-        #pygame.mixer.init()
-        #screen=pygame.display.set_mode([640,480])
-        #pygame.time.delay(1000)
-        if b == q2.get() or q2.empty():
-            try:            
-                #while pygame.mixer.music.get_busy():
-                    #pygame.time.delay(100)  
-                pygame.mixer.music.load(file2)              
-                pygame.mixer.music.play(2)
-            except pygame.error as message:   
-                print("Cannot load file")
+        else:
+            if a != q1.get():
+                #while pygame.mixer.music.get_busy():      
+                    #pygame.time.delay(100)
                 pygame.mixer.music.stop()
-    if not pygame.mixer.music.get_busy(): 
-        pygame.mixer.music.unload()
+                #pygame.mixer.music.unload()
+                pygame.mixer.music.load(file1)
+                pygame.mixer.music.play(2)
+    time.sleep(3)
+    if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
+            print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
+            b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
+            print (b)
+            q2.put(b)
+            
+            time.sleep(1)
+            if b != q2.get():
+                try:            
+                    #while pygame.mixer.music.get_busy():
+                        #pygame.time.delay(100)
+                    file2 = b+".mp3"
+                    pygame.mixer.music.load(file2)
+                    #pygame.mixer.music.queue(file2)
+                    pygame.mixer.music.play(2)
+                    #q2.put(1)
+                except pygame.error as message:   
+                    print("Cannot load file")
+                    pygame.mixer.music.stop()
+    
+    #if not pygame.mixer.music.get_busy(): 
+        #pygame.mixer.music.unload()
                 
