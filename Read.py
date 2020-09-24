@@ -68,18 +68,22 @@ while continue_reading:
                     while pygame.mixer.music.get_busy():
                         pygame.time.delay(100)
                     pygame.mixer.music.load(file2)
-                    pygame.mixer.music.play()
+                    pygame.mixer.music.play(2)
+                    q2.put(1)
+                    time.sleep(1)
                 except pygame.error as message:   
                     print("Cannot load file")
                     pygame.mixer.music.stop()
+
         else:
             if a != q1.get():
                 #while pygame.mixer.music.get_busy():      
-                    #pygame.time.delay(100)
+                #pygame.time.delay(100)
                 pygame.mixer.music.stop()
                 #pygame.mixer.music.unload()
                 pygame.mixer.music.load(file1)
                 pygame.mixer.music.play(2)
+                q1.put(1)
     time.sleep(3)
     if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
             print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
@@ -96,7 +100,7 @@ while continue_reading:
                     pygame.mixer.music.load(file2)
                     #pygame.mixer.music.queue(file2)
                     pygame.mixer.music.play(2)
-                    #q2.put(1)
+                    q2.put(1)
                 except pygame.error as message:   
                     print("Cannot load file")
                     pygame.mixer.music.stop()
