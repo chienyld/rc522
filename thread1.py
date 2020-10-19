@@ -1,55 +1,14 @@
-# -*- coding: utf8 -*-
-#
-#    Copyright 2014,2018 Mario Gomez <mario.gomez@teubi.co>
-#
-#    This file is part of MFRC522-Python
-#    MFRC522-Python is a simple Python implementation for
-#    the MFRC522 NFC Card Reader for the Raspberry Pi.
-#
-#    MFRC522-Python is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU Lesser General Public License as published by
-#    the Free Software Foundation, either version 3 of the License, or
-#    (at your option) any later version.
-#
-#    MFRC522-Python is distributed in the hope that it will be useful,
-#    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU Lesser General Public License for more details.
-#
-#    You should have received a copy of the GNU Lesser General Public License
-#    along with MFRC522-Python.  If not, see <http://www.gnu.org/licenses/>.
-#
-
+from multiprocessing import Process
+import os
+import time
 import RPi.GPIO as GPIO
 import MFRC522
 import MFRC52202
 import signal
-import time
 import pygame
 
-
-continue_reading = True
-
-# Capture SIGINT for cleanup when the script is aborted
-def end_read(signal,frame):
-    global continue_reading
-    print ("Ctrl+C captured, ending read.")
-    continue_reading = False
-    GPIO.cleanup()
-
-# Hook the SIGINT
-signal.signal(signal.SIGINT, end_read)
-
-# Create an object of the class MFRC522
-#MIFAREReader = MFRC522.MFRC522()
-
-# Welcome message
-print ("Welcome to the MFRC522 data read example")
-print ("Press Ctrl-C to stop.")
-b="0"
-b2="1"
-# This loop keeps checking for chips. If one is near it will get the UID and authenticate
-while continue_reading:
+def long_time_task(i):
+  while continue_reading:
     MIFAREReader = MFRC522.MFRC522()
     # Scan for cards    
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)    
@@ -58,7 +17,7 @@ while continue_reading:
     # If we have the UID, continue
     MIFAREReader2 = MFRC52202.MFRC52202()
     (status2,TagType2) = MIFAREReader2.MFRC522_Request(MIFAREReader2.PICC_REQIDL)    
-        # Get the UID of the card
+    # Get the UID of the card
     (status2,uid2) = MIFAREReader2.MFRC522_Anticoll()
         
     if status == MIFAREReader.MI_OK:
@@ -76,17 +35,17 @@ while continue_reading:
         o1=open(file1)
         pygame.mixer.music.load(file1)
         pygame.mixer.music.play()
-        
         #while continue_reading:
         # Scan for cards    
         (status2,TagType2) = MIFAREReader2.MFRC522_Request(MIFAREReader2.PICC_REQIDL)    
         # Get the UID of the card
         (status2,uid2) = MIFAREReader2.MFRC522_Anticoll()
         # If we have the UID, continue
-        while pygame.mixer.music.get_busy():      
+        while pygame.mixer.music.get_busy():
             pygame.time.delay(100)
         pygame.mixer.music.stop()
         o1.close()
+        
         if status2 == MIFAREReader2.MI_OK:
         # Print UID
             print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
@@ -95,9 +54,6 @@ while continue_reading:
             file2 = b+".mp3"
             #time.sleep(1)
             try:            
-                while pygame.mixer.music.get_busy():
-                    pygame.time.delay(100)
-                    
                 pygame.mixer.music.load(file2)
                 pygame.mixer.music.play()
                 while pygame.mixer.music.get_busy():
@@ -105,6 +61,7 @@ while continue_reading:
             except pygame.error as message:   
                 print("Cannot load file")
                 pygame.mixer.music.stop()
+                
     if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
         #time.sleep(1)
         print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
@@ -116,4 +73,30 @@ while continue_reading:
         screen=pygame.display.set_mode([640,480])      
         pygame.mixer.music.load(file2)
         pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            if pygame.mixer.music.get_busy():
+                pygame.time.delay(100)
+            else:
+                pygame.mixer.music.stop()
+            pygame.time.delay(100)
         time.sleep(1)
+        
+# Capture SIGINT for cleanup when the script is aborted
+def end_read(signal,frame):
+    global continue_reading
+    print ("Ctrl+C captured, ending read.")
+    continue_reading = False
+    GPIO.cleanup()
+# Hook the SIGINT
+signal.signal(signal.SIGINT, end_read)
+        
+if __name__=='__main__':
+
+    continue_reading = True
+    
+    print ("Welcome to the MFRC522 data read example")
+    print ("Press Ctrl-C to stop.")
+
+    p1 = Process(target=long_time_task, args=(1,))
+    p1.start()
+    p1.join()
