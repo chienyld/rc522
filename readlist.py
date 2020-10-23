@@ -5,9 +5,11 @@ import signal
 import time
 import pygame
 import threading
+import Queue
 
 continue_reading = True
-
+q=Queue.Queue(maxsize=3)
+q.put("0")
 # Capture SIGINT for cleanup when the script is aborted
 def end_read(signal,frame):
     global continue_reading
@@ -40,11 +42,12 @@ def reader1():
             print ("Card1 read UID: %s,%s,%s,%s" % (uid[0], uid[1], uid[2], uid[3]))
             id1=str(uid[0])+str(uid[1])+str(uid[2])+str(uid[3])
             print (id1)
-            if id1 != list1[0]:
-                list1.append(id1)
+            q.put(id1)
+            if id1 != q.get():
+                #list1.append(id1)
                 music()
-            else:
-                list1.pop(0)
+            #else:
+                #list1.pop(0)
 def mainth():
 # This loop keeps checking for chips. If one is near it will get the UID and authenticate
     while continue_reading:
@@ -100,18 +103,7 @@ def mainth():
                 except pygame.error as message:   
                     print("Cannot load file")
                     pygame.mixer.music.stop()
-        if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
-            #time.sleep(1)
-            print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
-            b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
-            print (b)
-            file2 = b+".mp3"
-            pygame.init()
-            pygame.mixer.init()
-            screen=pygame.display.set_mode([640,480])      
-            pygame.mixer.music.load(file2)
-            pygame.mixer.music.play()
-            time.sleep(1)
+        
 def music():
     try:
         pygame.mixer.music.stop()
@@ -120,13 +112,14 @@ def music():
         pygame.mixer.init()
         screen=pygame.display.set_mode([640,480])
         pygame.time.delay(300)
-        f1=list1[1]
+        #f1=list1[1]
+        f1=q.get()
         file1 = f1+".mp3"
         o1=open(file1)
         pygame.mixer.music.load(file1)
         pygame.mixer.music.play(2)
         o1.close()
-        list1.pop(0)       
+        #list1.pop(0)       
         #pygame.mixer.music.stop()
     except pygame.error as message:   
         print("Cannot load file")
