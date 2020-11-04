@@ -11,18 +11,19 @@ import pygame
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 #lock=threading.Lock()
 
-a = Queue.Queue(maxsize=6)
-a1 = Queue.Queue(maxsize=6)
-b = Queue.Queue(maxsize=6)
-b1 = Queue.Queue(maxsize=6)
-a.put("0")
-a.put("0")
-b.put("0")
-b.put("0")
+list1=[]
+list1=list()
+list2=[]
+list2=list()
 continue_reading = True
 uid1="0"
+uid2="0"
 uid3="0"
-
+uid4="0"
+list1.append(0)
+list1.append(0)
+list2.append(0)
+list2.append(0)
 pygame.init()
 pygame.mixer.init()
 screen=pygame.display.set_mode([640,480])
@@ -37,11 +38,13 @@ def mfrc1():
             print("read")
             print ("Card1 read UID: %s,%s,%s,%s" % (uid[0], uid[1], uid[2], uid[3]))
             global uid1
+            global uid2
             uid1=str(uid[0])+str(uid[1])+str(uid[2])+str(uid[3])
             print (uid1)
-            a.put(uid1)
-            a1.put(uid)
-            a.get()
+            if uid1 != list1[0]:
+                uid2=list1[0]
+                list1.append(uid1)
+                list1.pop(0)
 def mfrc2():
     while continue_reading:
         time.sleep(0.5)
@@ -51,22 +54,26 @@ def mfrc2():
         if status2 == MIFAREReader2.MI_OK:
             print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
             global uid3
+            global uid4
             uid3=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
             print (uid3)
-            b.put(uid3)
-            b1.put(uid3)
-            b.get()
+            if uid3 != list2[0]:
+                uid4=list2[0]
+                list2.append(uid3)
+                list2.pop(0)
 def music():
     while continue_reading:
         time.sleep(1)
         print("while")
-        q1=a.get()
-        print(q1+"is q1")
-        #print(uid3+"is u1")
-        q2=b.get()
-        print(q2+"is q2")
-        #print(uid3+"is u2")
-        if uid1 != q1:
+        print(list1[0])
+        print(list1[1])
+        print(list2[0])
+        print(list2[1])
+        global uid1
+        uid1= str(list1[1])
+        global uid3
+        uid3= str(list2[1])
+        if uid1 != uid2:
             try:
                 print (uid1+"reading")
                 time.sleep(0.1)
@@ -78,6 +85,8 @@ def music():
                 o1=open(file1)
                 pygame.mixer.music.load(file1)
                 pygame.mixer.music.play()
+                list1.append("0")
+                list1.pop(0)
                 while pygame.mixer.music.get_busy():      
                     pygame.time.delay(100)
                 pygame.mixer.music.stop()
@@ -85,7 +94,10 @@ def music():
             except pygame.error as message:   
                 print("Cannot load file")
                 pygame.mixer.music.stop()
-            if uid3 != q2:
+            except:
+                print("Cannot load file")
+                pygame.mixer.music.stop()
+            if uid3 != uid4:
                 print (uid3+"reading")
                 file2 = uid3+".mp3"
                 #time.sleep(1)
@@ -94,14 +106,17 @@ def music():
                         pygame.time.delay(100)
                     pygame.mixer.music.load(file2)
                     pygame.mixer.music.play()
+                    list2.append("0")
+                    list2.pop(0)
                     while pygame.mixer.music.get_busy():
                         pygame.time.delay(100)
                 except pygame.error as message:   
                     print("Cannot load file")
                     pygame.mixer.music.stop()
+                
             else:
                 print("no card2")
-        if uid3 != q2 and uid1 == q1:
+        if uid3 != uid4 and uid1 == uid2:
             time.sleep(0.1)
             try:
                 print (uid3+"reading")
@@ -112,11 +127,13 @@ def music():
                 pygame.mixer.music.load(file2)
                 pygame.mixer.music.play()
                 time.sleep(0.1)
+                list2.append("0")
+                list2.pop(0)
             except pygame.error as message:   
                 print("Cannot load file")
                 pygame.mixer.music.stop()
-        elif q1 ==0 and q2==0:
-            print("000")
+        #elif q1 ==0 and q2==0:
+            #print("000")
 
         
 t1 = threading.Thread(target=mfrc1)
@@ -125,5 +142,6 @@ t3 = threading.Thread(target=music)
 t1.start()
 t2.start()
 t3.start()
+
 
 
