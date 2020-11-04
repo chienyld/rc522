@@ -116,7 +116,7 @@ def music():
                 
             else:
                 print("no card2")
-        if uid3 != uid4 and uid1 == uid2:
+        """if uid3 != uid4 and uid1 == uid2:
             time.sleep(0.1)
             try:
                 print (uid3+"reading")
@@ -133,7 +133,7 @@ def music():
                 print("Cannot load file")
                 pygame.mixer.music.stop()
         #elif q1 ==0 and q2==0:
-            #print("000")
+            #print("000")"""
 
         
 t1 = threading.Thread(target=mfrc1)
