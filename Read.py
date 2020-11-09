@@ -21,6 +21,7 @@ signal.signal(signal.SIGINT, end_read)
 #MIFAREReader = MFRC522.MFRC522()
 print ("Welcome to the MFRC522 data read example")
 print ("Press Ctrl-C to stop.")
+<<<<<<< HEAD
 
 q1 = Queue.Queue(maxsize=10)
 q2 = Queue.Queue(maxsize=10)
@@ -32,6 +33,11 @@ pygame.mixer.init()
 screen=pygame.display.set_mode([640,480])
 pygame.time.delay(1000)
 
+=======
+b="0"
+b2="1"
+# This loop keeps checking for chips. If one is near it will get the UID and authenticate
+>>>>>>> 32928fa0f43f304292c995d2279ec53477a2e934
 while continue_reading:
     MIFAREReader = MFRC522.MFRC522()  
     (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)    
@@ -86,6 +92,7 @@ while continue_reading:
                 q1.put(1)
     time.sleep(3)
     if status2 == MIFAREReader2.MI_OK and status != MIFAREReader.MI_OK:
+<<<<<<< HEAD
             print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
             b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
             print (b)
@@ -108,3 +115,16 @@ while continue_reading:
     #if not pygame.mixer.music.get_busy(): 
         #pygame.mixer.music.unload()
                 
+=======
+        #time.sleep(1)
+        print ("Card2 read UID: %s,%s,%s,%s" % (uid2[0], uid2[1], uid2[2], uid2[3]))
+        b=str(uid2[0])+str(uid2[1])+str(uid2[2])+str(uid2[3])
+        print (b)
+        file2 = b+".mp3"
+        pygame.init()
+        pygame.mixer.init()
+        screen=pygame.display.set_mode([640,480])      
+        pygame.mixer.music.load(file2)
+        pygame.mixer.music.play()
+        time.sleep(1)
+>>>>>>> 32928fa0f43f304292c995d2279ec53477a2e934
