@@ -6,7 +6,7 @@ import MFRC522
 import MFRC52202
 import signal
 import pygame
-#import Queue
+import Queue
 
 signal.signal(signal.SIGINT, signal.SIG_DFL)
 #lock=threading.Lock()

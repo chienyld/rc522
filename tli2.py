@@ -63,7 +63,7 @@ def mfrc2():
                 list2.pop(0)
 def music():
     while continue_reading:
-        time.sleep(1)
+        time.sleep(0.2)
         print("while")
         print(list1[0])
         print(list1[1])
@@ -73,6 +73,7 @@ def music():
         uid1= str(list1[1])
         global uid3
         uid3= str(list2[1])
+        
         if uid1 != uid2:
             try:
                 print (uid1+"reading")
@@ -112,11 +113,27 @@ def music():
                         pygame.time.delay(100)
                 except pygame.error as message:   
                     print("Cannot load file")
-                    pygame.mixer.music.stop()
-                
+                    pygame.mixer.music.stop()    
             else:
                 print("no card2")
-        if uid3 != uid4 and uid1 == uid2:
+        else:
+            if uid3 != uid4:
+                print (uid3+"reading")
+                file2 = uid3+".mp3"
+                #time.sleep(1)
+                try:            
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.delay(100)
+                    pygame.mixer.music.load(file2)
+                    pygame.mixer.music.play()
+                    list2.append("0")
+                    list2.pop(0)
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.delay(100)
+                except pygame.error as message:   
+                    print("Cannot load file")
+                    pygame.mixer.music.stop()
+        """if uid3 != uid4 and uid1 == uid2:
             time.sleep(0.1)
             try:
                 print (uid3+"reading")
@@ -133,15 +150,26 @@ def music():
                 print("Cannot load file")
                 pygame.mixer.music.stop()
         #elif q1 ==0 and q2==0:
-            #print("000")
-
+            #print("000")"""
+def timeinterval():
+    while continue_reading:
+        time.sleep(8)
+        print("---")
+        global uid2
+        uid2= 0
+        global uid4
+        uid2= 0
         
 t1 = threading.Thread(target=mfrc1)
 t2 = threading.Thread(target=mfrc2)
 t3 = threading.Thread(target=music)
+t4 = threading.Thread(target=timeinterval)
+
 t1.start()
 t2.start()
 t3.start()
+t4.start()
+
 
 
 
