@@ -153,6 +153,7 @@ t1 = threading.Thread(target=mfrc1)
 t2 = threading.Thread(target=mfrc2)
 t3 = threading.Thread(target=music)
 t4 = threading.Thread(target=gap)
+t3.daemon = True
 t1.start()
 t2.start()
 t3.start()

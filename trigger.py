@@ -27,7 +27,6 @@ def runC():
             t2 = Thread(target = runB)
             t2.start()
 if __name__ == "__main__":
-    global t1,t2,t3
     t1 = Thread(target = runA)
     t2 = Thread(target = runB)
     t3 = Thread(target = runC)
