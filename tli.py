@@ -121,7 +121,7 @@ def music():
                 except:
                     print("Cannot load file")
                     pygame.mixer.music.stop()
-        elif id2 != uid4 and id1==uid1:
+        elif id2 != uid4:
             try:
                 print (id2+"else card2 reading")
                 pygame.mixer.init()
