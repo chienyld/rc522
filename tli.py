@@ -28,7 +28,7 @@ pygame.init()
 pygame.mixer.init()
 def mfrc1():
     while continue_reading:
-        time.sleep(0.5)
+        time.sleep(0.3)
         MIFAREReader = MFRC522.MFRC522()
         (status,TagType) = MIFAREReader.MFRC522_Request(MIFAREReader.PICC_REQIDL)    
         (status,uida) = MIFAREReader.MFRC522_Anticoll()
@@ -43,9 +43,10 @@ def mfrc1():
                 uid2=list1[0]
                 list1.append(uid1)
                 list1.pop(0)
+                pygame.mixer.music.stop()
 def mfrc2():
     while continue_reading:
-        time.sleep(0.6)
+        time.sleep(0.3)
         MIFAREReader2 = MFRC52202.MFRC52202()
         (status2,TagType2) = MIFAREReader2.MFRC522_Request(MIFAREReader2.PICC_REQIDL)    
         (status2,uidb) = MIFAREReader2.MFRC522_Anticoll()
@@ -59,6 +60,7 @@ def mfrc2():
                 uid4=list2[0]
                 list2.append(uid3)
                 list2.pop(0)
+                pygame.mixer.music.stop()
 def music():
     while continue_reading:
         global uid1,uid2,uid3,uid4,id1,id2
@@ -111,26 +113,32 @@ def music():
                     print (id1+"else 1 reading")
                     time.sleep(0.1)
                     pygame.mixer.init()
+                    pygame.time.delay(10)
                     file1 = id1+".mp3"
-                    o1=open(file1)
+                    o3=open(file1)
                     pygame.mixer.music.load(file1)
                     pygame.mixer.music.play(2)
+                    while pygame.mixer.music.get_busy():
+                        pygame.time.delay(10)
                     pygame.mixer.music.stop()
-                    o1.close()
+                    o3.close()
                     uid2=id1
                 except:
                     print("Cannot load file")
                     pygame.mixer.music.stop()
         elif id2 != uid4:
             try:
-                print (id2+"else card2 reading")
                 pygame.mixer.init()
+                pygame.time.delay(10)
                 file2 = id2+".mp3"
-                o2=open(file2)
+                o4=open(file2)
                 pygame.mixer.music.load(file2)
+                print (id2+"else card2 reading")
                 pygame.mixer.music.play(2)
+                while pygame.mixer.music.get_busy():
+                    pygame.time.delay(10)
                 pygame.mixer.music.stop()
-                o2.close()
+                o4.close()
                 uid4=id2
             except:
                 print("Cannot load file")
@@ -138,27 +146,17 @@ def music():
 def gap():
     while continue_reading:
         time.sleep(10)
-        global uid2,uid4
-        uid2 = "0"
-        uid4 = "0"
-        print("gap")
-        list1.append("0")
-        list1.append("0")
-        list2.append("0")
-        list2.append("0")
-        list1.pop(0)
-        list1.pop(0)
-        list2.pop(0)
-        list2.pop(0)
+        list1[0]="0"
+        list2[0]="0"
                         
 t1 = threading.Thread(target=mfrc1)
 t2 = threading.Thread(target=mfrc2)
 t3 = threading.Thread(target=music)
-#t4 = threading.Thread(target=gap)
+t4 = threading.Thread(target=gap)
 t1.start()
 t2.start()
 t3.start()
-#t4.start()
+t4.start()
 
 
 
